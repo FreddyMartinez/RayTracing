@@ -61,13 +61,12 @@ glm::vec3 ColorPixel(const Ray &ray)
 float HitSphere(const Point &center, double radius, const Ray &r)
 {
     glm::vec3 oc = r.orig - center;
-    auto a = glm::dot(r.dir, r.dir);
-    auto b = 2.0 * dot(oc, r.dir);
-    auto c = dot(oc, oc) - radius * radius;
-    auto discriminant = b * b - 4 * a * c;
+    auto b = 2.0 * glm::dot(oc, r.dir);
+    auto c = glm::dot(oc, oc) - radius * radius;
+    auto discriminant = b * b - 4 * c; // a = 1 because r.dir is unitary
     if (discriminant < 0)
     {
         return -1.0;
     }
-    return (-b - sqrt(discriminant)) / (2.0 * a);
+    return (-b - sqrt(discriminant)) / (2.0);
 }
