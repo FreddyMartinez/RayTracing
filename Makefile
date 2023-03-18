@@ -2,6 +2,7 @@ PROG=main
 SRCS= \
 main.cc \
 ray.cc \
+camera.cc \
 obj.cc \
 png.cc \
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <iostream>
 #include <vector>
+#include "camera.h"
 
 using namespace std;
 
@@ -20,5 +20,4 @@ class Ray {
         void setPosition(int x, int y);
 };
 
-glm::vec4 Transform(glm::vec4 vector, glm::mat4 Matrix);
-vector<Ray> CreateRayVector(glm::vec3 camera, int width, int height);
+vector<Ray> CreateRayVector(Camera& camera, int width, int height);
