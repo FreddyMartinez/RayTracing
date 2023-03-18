@@ -32,7 +32,7 @@ vector<Ray> CreateRayVector(Camera& camera, int width, int height)
         double xpos = dx / 2 + i * dx -1 ;
         for (int j = 0; j < height; j++)
         {
-            double ypos = dy / 2 + j * dy -1 ;
+            double ypos = 1 - (dy / 2 + j * dy); // flip vertically
             glm::vec4 p(xpos, ypos, 1, 1);
             glm::vec4 transformed = M * p;
             Ray ray = Ray(camera.orig, glm::vec3(transformed));
