@@ -7,17 +7,18 @@
 #include "png.h"
 #include <glm/gtx/intersect.hpp>
 #include "hittable.h"
+#include "sphere.h"
 
 using namespace std;
 
 void Draw(vector<Ray> &rayVector);
 glm::vec3 ColorPixel(const Ray &ray);
-float HitSphere(const Point &center, double radius, const Ray &r);
 float HitObj(const Ray &ray, const OBJ &obj);
 
 const int width = 500;
 const int height = 500;
 
+const double maxDistance = 100.0;
 OBJ obj;
 
 int main(int argc, char *argv[])
@@ -61,33 +62,20 @@ void Draw(vector<Ray> &rayVector)
 
 glm::vec3 ColorPixel(const Ray &ray)
 {
-    float t = HitSphere(Point(-0.8, 0, -1), 0.5, ray);
-    if (t > 0.0)
+    Sphere sp(Point(-0.8, 0, -1), 0.5);
+    Hit hit;
+    if (sp.IsHitByRay(ray, maxDistance, hit))
     {
-        glm::vec3 N = glm::normalize(ray.CalcPointAt(t) - glm::vec3(0, 0, -1));
-        return float(0.5) * glm::vec3(N.x + 1, N.y + 1, N.z + 1);
+        return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
     }
 
-    t = HitObj(ray, obj);
+    float t = HitObj(ray, obj);
     if (t > 0.0) {
         return float(0.5) * glm::vec3(1, 1, 1);
     }
 
     t = ray.dir.y + 1.0;
     return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
-}
-
-float HitSphere(const Point &center, double radius, const Ray &r)
-{
-    glm::vec3 oc = r.orig - center;
-    auto b = 2.0 * glm::dot(oc, r.dir);
-    auto c = glm::dot(oc, oc) - radius * radius;
-    auto discriminant = b * b - 4 * c; // a = 1 because r.dir is unitary
-    if (discriminant < 0)
-    {
-        return -1.0;
-    }
-    return (-b + sqrt(discriminant)) / (2.0);
 }
 
 float HitObj(const Ray &ray, const OBJ &obj) {
