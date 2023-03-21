@@ -6,6 +6,7 @@
 #include "obj.h"
 #include "png.h"
 #include <glm/gtx/intersect.hpp>
+#include "hittable.h"
 
 using namespace std;
 
