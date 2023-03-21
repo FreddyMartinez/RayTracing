@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <string>
 #include "ray.h"
 #include "camera.h"
 #include "obj.h"
@@ -20,8 +21,17 @@ OBJ obj;
 
 int main(int argc, char *argv[])
 {
+    if(argc < 4) {
+        cout << "Not enough params, camera position required";
+        return 0;
+    }
+
+    float xpos = std::stof(argv[1]);
+    float ypos = std::stof(argv[2]);
+    float zpos = std::stof(argv[3]);
+
     // definir posición de la cámara
-    Camera camera(glm::vec3(0.0f, 0.0f, -2.0f));
+    Camera camera(glm::vec3(xpos, ypos, zpos));
     // generar rayos
     vector<Ray> rayVector = CreateRayVector(camera, width, height);
 
