@@ -8,12 +8,12 @@
 #include <glm/gtx/intersect.hpp>
 #include "hittable.h"
 #include "sphere.h"
+#include "hittableObj.h"
 
 using namespace std;
 
 void Draw(vector<Ray> &rayVector);
 glm::vec3 ColorPixel(const Ray &ray);
-float HitObj(const Ray &ray, const OBJ &obj);
 
 const int width = 500;
 const int height = 500;
@@ -69,25 +69,11 @@ glm::vec3 ColorPixel(const Ray &ray)
         return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
     }
 
-    float t = HitObj(ray, obj);
-    if (t > 0.0) {
-        return float(0.5) * glm::vec3(1, 1, 1);
+    HittableObj hobj = HittableObj(obj);
+    if (hobj.IsHitByRay(ray, maxDistance, hit)) {
+        return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
     }
 
-    t = ray.dir.y + 1.0;
+    float t = ray.dir.y + 1.0;
     return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
-}
-
-float HitObj(const Ray &ray, const OBJ &obj) {
-    vector<Point> vertices = obj.faces();
-    for (int i = 0; i < vertices.size(); i+=3)
-    {
-        glm::vec2 baryPosition;
-        float distance;
-
-        if (glm::intersectRayTriangle(ray.orig, ray.dir, vertices[i], vertices[i+1], vertices[i+2], baryPosition, distance)) {
-            return distance;
-        }
-    }
-    return -1.0;
 }
