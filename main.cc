@@ -64,7 +64,7 @@ glm::vec3 ColorPixel(const Ray &ray)
     float t = HitSphere(Point(-0.8, 0, -1), 0.5, ray);
     if (t > 0.0)
     {
-        glm::vec3 N = glm::normalize(ray.orig + t*ray.dir - glm::vec3(0, 0, -1));
+        glm::vec3 N = glm::normalize(ray.CalcPointAt(t) - glm::vec3(0, 0, -1));
         return float(0.5) * glm::vec3(N.x + 1, N.y + 1, N.z + 1);
     }
 

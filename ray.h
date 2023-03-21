@@ -18,6 +18,9 @@ class Ray {
 
         Ray(Point origin, Point p);
         void setPosition(int x, int y);
+        Point CalcPointAt(float distance) const {
+            return orig + distance*dir;
+        }
 };
 
 vector<Ray> CreateRayVector(Camera& camera, int width, int height);
