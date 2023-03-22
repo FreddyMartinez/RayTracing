@@ -302,6 +302,16 @@ void OBJ::normalize()
 	}
 }
 
+// bad implementation of scale 
+void OBJ::scale(int factor) {
+	for (auto& v : fv)
+	{
+		v.x *= factor;
+		v.y *= factor;
+		v.z *= factor;
+	}
+}
+
 void OBJ::make_normals()
 {
 	for (int i=0; i<fv.size(); i+=3)
