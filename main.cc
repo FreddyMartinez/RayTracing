@@ -5,21 +5,20 @@
 #include "camera.h"
 #include "obj.h"
 #include "png.h"
-#include <glm/gtx/intersect.hpp>
 #include "hittable.h"
 #include "sphere.h"
 #include "hittableObj.h"
 
 using namespace std;
 
-void Draw(vector<Ray> &rayVector);
-glm::vec3 ColorPixel(const Ray &ray);
+void Draw(vector<Ray> &rayVector, vector<Hittable*> &world);
+glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world);
+vector<Hittable*> CreateWorld();
 
 const int width = 500;
 const int height = 500;
 
 const double maxDistance = 100.0;
-OBJ obj;
 
 int main(int argc, char *argv[])
 {
@@ -38,42 +37,54 @@ int main(int argc, char *argv[])
     vector<Ray> rayVector = CreateRayVector(camera, width, height);
 
     // cargar el(los) objeto(s)
-    obj.load("./obj/cube.obj");
-
-    // calcular intersecciones
-    // punto = camara + rayo*distancia
+    vector<Hittable*> world = CreateWorld();
 
     // pintar escena
-    Draw(rayVector);
+    Draw(rayVector, world);
 
     return 0;
 }
 
-void Draw(vector<Ray> &rayVector)
+void Draw(vector<Ray> &rayVector, vector<Hittable*> &world)
 {
     PNG png(width, height);
     for (int i = 0; i < rayVector.size(); i++)
     {
-        glm::vec3 color = ColorPixel(rayVector[i]);
+        glm::vec3 color = ColorPixel(rayVector[i], world);
         png.set(rayVector[i].x, rayVector[i].y, color.x, color.y, color.z);
     }
     png.save("TestImg.png");
 }
 
-glm::vec3 ColorPixel(const Ray &ray)
+glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world)
 {
-    Sphere sp(Point(-0.8, 0, -1), 0.5);
     Hit hit;
-    if (sp.IsHitByRay(ray, maxDistance, hit))
-    {
-        return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
-    }
-
-    HittableObj hobj = HittableObj(obj);
-    if (hobj.IsHitByRay(ray, maxDistance, hit)) {
-        return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
+    std::vector<Hittable*>::iterator hitObj;
+    for (const auto& hitObj : world) {
+        if (hitObj->IsHitByRay(ray, maxDistance, hit))
+        {
+            return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
+        }
     }
 
     float t = ray.dir.y + 1.0;
     return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
+}
+
+
+vector<Hittable*> CreateWorld() {
+    vector<Hittable*> world;
+    // add cube
+    OBJ cube("./obj/cube.obj");
+    HittableObj* hcube = new HittableObj(cube);
+    world.push_back(hcube);
+    // add sphere
+    Sphere* sphere = new Sphere(Point(-0.8, 0.5, 0), 0.5);
+    world.push_back(sphere);
+    // add floor
+    OBJ plane("./obj/floor.obj");
+    plane.scale(20);
+    HittableObj* hplane = new HittableObj(plane);
+    world.push_back(hplane);
+    return world;
 }
