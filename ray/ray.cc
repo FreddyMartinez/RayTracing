@@ -18,7 +18,7 @@ void Ray::setPosition(int i, int j){
     y = j;
 }
 
-vector<Ray> CreateRayVector(Camera& camera)
+vector<Ray> CreateRayVector(Camera& camera, int numOfSamples)
 {
     vector<Ray> rayVector;
     // crea puntos en espacio de cámara [-1,1] 
@@ -37,9 +37,21 @@ vector<Ray> CreateRayVector(Camera& camera)
             glm::vec4 transformed = M * p;
             Ray ray = Ray(camera.orig, glm::vec3(transformed));
             ray.setPosition(i,j);
+
+            for (int i = 0; i < numOfSamples; i++)
+            {
+                glm::vec4 rp(xpos + RandomDouble(dx), ypos + RandomDouble(dy), 1, 1);
+                Ray randomRay = Ray(camera.orig, glm::vec3(M * rp));
+                ray.randomRayVector.push_back(randomRay);
+            }
+            
             rayVector.push_back(ray);
         }
     }
     return rayVector;
 }
 
+
+double RandomDouble(double max) {
+    return max * rand() / (RAND_MAX + 1.0) - max / 2;
+}

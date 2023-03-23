@@ -15,6 +15,7 @@ class Ray {
         Point orig;
         int x;
         int y;
+        vector<Ray> randomRayVector;
 
         Ray(Point origin, Point p);
         void setPosition(int x, int y);
@@ -23,4 +24,5 @@ class Ray {
         }
 };
 
-vector<Ray> CreateRayVector(Camera& camera);
+vector<Ray> CreateRayVector(Camera& camera, int numOfSamples);
+double RandomDouble(double max);
