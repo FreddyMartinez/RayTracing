@@ -1,10 +1,10 @@
 PROG=main
 SRCS= \
 main.cc \
-ray.cc \
-camera.cc \
-obj.cc \
-png.cc \
+ray/ray.cc \
+camera/camera.cc \
+obj/obj.cc \
+png/png.cc \
 
 CXX:=g++ -O3 -march=native
 

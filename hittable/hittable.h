@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ray.h"
+#include "../ray/ray.h"
 
 const float epsilon = 0.01;
 

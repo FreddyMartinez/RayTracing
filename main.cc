@@ -1,13 +1,13 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "ray.h"
-#include "camera.h"
-#include "obj.h"
-#include "png.h"
-#include "hittable.h"
-#include "sphere.h"
-#include "hittableObj.h"
+#include "ray/ray.h"
+#include "camera/camera.h"
+#include "obj/obj.h"
+#include "png/png.h"
+#include "hittable/hittable.h"
+#include "hittable/sphere.h"
+#include "hittable/hittableObj.h"
 
 using namespace std;
 

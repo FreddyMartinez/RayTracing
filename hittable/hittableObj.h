@@ -2,7 +2,7 @@
 
 #include <glm/gtx/intersect.hpp>
 #include "hittable.h"
-#include "obj.h"
+#include "../obj/obj.h"
 
 class HittableObj : public Hittable {
     public:

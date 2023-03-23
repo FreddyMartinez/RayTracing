@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include "ray.h"
-#include "camera.h"
+#include "../camera/camera.h"
 
 using namespace std;
 

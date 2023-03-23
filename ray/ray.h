@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "camera.h"
+#include "../camera/camera.h"
 
 using namespace std;
 
