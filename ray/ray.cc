@@ -18,19 +18,19 @@ void Ray::setPosition(int i, int j){
     y = j;
 }
 
-vector<Ray> CreateRayVector(Camera& camera, int width, int height)
+vector<Ray> CreateRayVector(Camera& camera)
 {
     vector<Ray> rayVector;
     // crea puntos en espacio de cámara [-1,1] 
-    double dx = 2 / float(width);
-    double dy = 2 / float(height);
+    double dx = 2 / float(camera.width);
+    double dy = 2 / float(camera.height);
 
     glm::mat4 M = camera.getTransMatrix();
     
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < camera.width; i++)
     {
         double xpos = dx / 2 + i * dx -1 ;
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < camera.height; j++)
         {
             double ypos = 1 - (dy / 2 + j * dy); // flip vertically
             glm::vec4 p(xpos, ypos, 1, 1);

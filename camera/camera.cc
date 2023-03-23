@@ -6,12 +6,14 @@
 
 using namespace std;
 
-Camera::Camera(Point origin)
+Camera::Camera(Point origin, int viewWidth, int viewHeight)
 {
     l = glm::vec3(1.0f, 0.0f, 0.0f);
     u = glm::vec3(0.0f, 1.0f, 0.0f);
     f = glm::vec3(0.0f, 0.0f, 1.0f);
     orig = origin;
+    width = viewWidth;
+    height = viewHeight;
 }
 
 void Camera::setL(glm::vec3 lv)

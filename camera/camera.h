@@ -13,8 +13,10 @@ class Camera {
         glm::vec3 u;
         glm::vec3 l;
         glm::vec3 f;
+        int width;
+        int height;
 
-        Camera(Point origin);
+        Camera(Point origin, int viewWidth, int viewHeight);
         void setU(glm::vec3 uv);
         void setL(glm::vec3 lv);
         void setF(glm::vec3 fv);

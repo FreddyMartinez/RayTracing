@@ -23,4 +23,4 @@ class Ray {
         }
 };
 
-vector<Ray> CreateRayVector(Camera& camera, int width, int height);
+vector<Ray> CreateRayVector(Camera& camera);

@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
     float zpos = std::stof(argv[3]);
 
     // definir posición de la cámara
-    Camera camera(glm::vec3(xpos, ypos, zpos));
+    Camera camera(glm::vec3(xpos, ypos, zpos), width, height);
     // generar rayos
-    vector<Ray> rayVector = CreateRayVector(camera, width, height);
+    vector<Ray> rayVector = CreateRayVector(camera);
 
     // cargar el(los) objeto(s)
     vector<Hittable*> world = CreateWorld();
