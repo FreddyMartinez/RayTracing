@@ -71,12 +71,21 @@ glm::vec3 GetMultiSampledColor(const Ray &ray, vector<Hittable *> &world)
 glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world)
 {
     Hit hit;
+    Hit nearestHit;
+    nearestHit.distance = maxDistance;
     std::vector<Hittable*>::iterator hitObj;
     for (const auto& hitObj : world) {
         if (hitObj->IsHitByRay(ray, maxDistance, hit))
         {
-            return float(0.5) * glm::vec3(hit.normal.x + 1, hit.normal.y + 1, hit.normal.z + 1);
+            if (hit.distance < nearestHit.distance)
+            {
+                nearestHit = hit;
+            }
         }
+    }
+    if (nearestHit.distance < maxDistance)
+    {
+        return float(0.5) * glm::vec3(nearestHit.normal.x + 1, nearestHit.normal.y + 1, nearestHit.normal.z + 1);
     }
 
     float t = ray.dir.y + 1.0;
@@ -88,11 +97,15 @@ vector<Hittable*> CreateWorld() {
     vector<Hittable*> world;
     // add cube
     OBJ cube("./obj/cube.obj");
+    cube.translate(glm::vec3(1.0, 0.5, 0.0));
     HittableObj* hcube = new HittableObj(cube);
     world.push_back(hcube);
     // add sphere
     Sphere* sphere = new Sphere(Point(-0.8, 0.5, 0), 0.5);
     world.push_back(sphere);
+    // second sphere
+    Sphere* sphere2 = new Sphere(Point(0, 0.5, 2), 0.5);
+    world.push_back(sphere2);
     // add floor
     OBJ plane("./obj/floor.obj");
     plane.scale(20);

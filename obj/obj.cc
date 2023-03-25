@@ -312,6 +312,15 @@ void OBJ::scale(int factor) {
 	}
 }
 
+void OBJ::translate(glm::vec3 dir) {
+	for (auto& v : fv)
+	{
+		v.x += dir.x;
+		v.y += dir.y;
+		v.z += dir.z;
+	}
+}
+
 void OBJ::make_normals()
 {
 	for (int i=0; i<fv.size(); i+=3)

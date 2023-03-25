@@ -32,6 +32,7 @@ public:
 	bool load(const string& name,const glm::mat4& xf=glm::mat4(1.0f));
 	void normalize();
 	void scale(int factor);
+	void translate(glm::vec3 dir);
 
 	const vector<glm::vec3>& faces() const { return fv; }
 	const vector<glm::vec3>& normals() const { return fvn; }
