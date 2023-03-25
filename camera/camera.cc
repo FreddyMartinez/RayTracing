@@ -8,9 +8,9 @@ using namespace std;
 
 Camera::Camera(Point origin, int viewWidth, int viewHeight)
 {
-    l = glm::vec3(1.0f, 0.0f, 0.0f);
-    u = glm::vec3(0.0f, 1.0f, 0.0f);
-    f = glm::vec3(0.0f, 0.0f, 1.0f);
+    f = glm::normalize(Point(0.0, 0.0, 0.0) - origin);
+    l = glm::normalize(glm::cross(glm::vec3(0.0, 1.0, 0.0), f));
+    u = glm::normalize(glm::cross(f, l));
     orig = origin;
     width = viewWidth;
     height = viewHeight;
@@ -33,7 +33,9 @@ void Camera::setF(glm::vec3 fv) {
 glm::mat4 Camera::getTransMatrix()
 {
     glm::mat3 rot = glm::mat3(l, u, f);
-    glm::mat4 extended = glm::mat4(rot);
-    glm::mat4 M = glm::translate(extended, orig);
+    glm::mat4 M = glm::mat4(rot);
+    M[3][0] = orig.x;
+    M[3][1] = orig.y;
+    M[3][2] = orig.z;
     return M;
 }
