@@ -8,19 +8,20 @@
 #include "hittable/hittable.h"
 #include "hittable/sphere.h"
 #include "hittable/hittableObj.h"
+#include "world.h"
 
 using namespace std;
 
-void Draw(vector<Ray> &rayVector, vector<Hittable*> &world);
-glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world);
-glm::vec3 GetMultiSampledColor(const Ray &ray, vector<Hittable*> &world);
-vector<Hittable*> CreateWorld();
+void Draw(vector<Ray> &rayVector, World &world);
+Color ColorPixel(const Ray &ray, World &world);
+Color GetMultiSampledColor(const Ray &ray, World &world);
 
 const int width = 500;
 const int height = 500;
 
 const double maxDistance = 100.0;
 const int numOfSamples = 5.0;
+const int maxNumOfRebounds = 3;
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
     vector<Ray> rayVector = CreateRayVector(camera, numOfSamples);
 
     // cargar el(los) objeto(s)
-    vector<Hittable*> world = CreateWorld();
+    World world = World(Point(0.0, 50.0, 0.0));
 
     // pintar escena
     Draw(rayVector, world);
@@ -47,20 +48,20 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void Draw(vector<Ray> &rayVector, vector<Hittable*> &world)
+void Draw(vector<Ray> &rayVector, World &world)
 {
     PNG png(width, height);
     for (int i = 0; i < rayVector.size(); i++)
     {
-        glm::vec3 color = GetMultiSampledColor(rayVector[i], world);
+        Color color = GetMultiSampledColor(rayVector[i], world);
         png.set(rayVector[i].x, rayVector[i].y, color.x, color.y, color.z);
     }
     png.save("TestImg.png");
 }
 
-glm::vec3 GetMultiSampledColor(const Ray &ray, vector<Hittable *> &world)
+Color GetMultiSampledColor(const Ray &ray, World &world)
 {
-    glm::vec3 color = ColorPixel(ray, world);
+    Color color = ColorPixel(ray, world);
     for (const auto randRay : ray.randomRayVector)
     {
         color += ColorPixel(randRay, world);
@@ -68,13 +69,13 @@ glm::vec3 GetMultiSampledColor(const Ray &ray, vector<Hittable *> &world)
     return float(1.0 / (numOfSamples + 1)) * color;
 }
 
-glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world)
+Color ColorPixel(const Ray &ray, World &world)
 {
     Hit hit;
     Hit nearestHit;
     nearestHit.distance = maxDistance;
     std::vector<Hittable*>::iterator hitObj;
-    for (const auto& hitObj : world) {
+    for (const auto& hitObj : world.objects) {
         if (hitObj->IsHitByRay(ray, maxDistance, hit))
         {
             if (hit.distance < nearestHit.distance)
@@ -90,26 +91,4 @@ glm::vec3 ColorPixel(const Ray &ray, vector<Hittable*> &world)
 
     float t = ray.dir.y + 1.0;
     return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
-}
-
-
-vector<Hittable*> CreateWorld() {
-    vector<Hittable*> world;
-    // add cube
-    OBJ cube("./obj/cube.obj");
-    cube.translate(glm::vec3(1.0, 0.5, 0.0));
-    HittableObj* hcube = new HittableObj(cube);
-    world.push_back(hcube);
-    // add sphere
-    Sphere* sphere = new Sphere(Point(-0.8, 0.5, 0), 0.5);
-    world.push_back(sphere);
-    // second sphere
-    Sphere* sphere2 = new Sphere(Point(0, 0.5, 2), 0.5);
-    world.push_back(sphere2);
-    // add floor
-    OBJ plane("./obj/floor.obj");
-    plane.scale(20);
-    HittableObj* hplane = new HittableObj(plane);
-    world.push_back(hplane);
-    return world;
 }
