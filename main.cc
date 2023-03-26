@@ -13,8 +13,9 @@
 using namespace std;
 
 void Draw(vector<Ray> &rayVector, World &world);
-Color ColorPixel(const Ray &ray, World &world);
+Color ColorPixel(const Ray &ray, World &world, int reflections);
 Color GetMultiSampledColor(const Ray &ray, World &world);
+Hit CalcNearestHit(const Ray &ray, World &world);
 
 const int width = 500;
 const int height = 500;
@@ -61,15 +62,40 @@ void Draw(vector<Ray> &rayVector, World &world)
 
 Color GetMultiSampledColor(const Ray &ray, World &world)
 {
-    Color color = ColorPixel(ray, world);
+    Color color = ColorPixel(ray, world, 1);
     for (const auto randRay : ray.randomRayVector)
     {
-        color += ColorPixel(randRay, world);
+        color += ColorPixel(randRay, world, 1);
     }
     return float(1.0 / (numOfSamples + 1)) * color;
 }
 
-Color ColorPixel(const Ray &ray, World &world)
+Color ColorPixel(const Ray &ray, World &world, int reflections)
+{
+    if (reflections >= 20)
+    {
+        return Color(0.0, 0.0, 0.0);
+    }
+
+    Hit hit = CalcNearestHit(ray, world);
+    if (hit.distance < maxDistance)
+    {
+        Ray rayToLight = Ray(hit.point, world.light);
+        Hit hitToLight = CalcNearestHit(rayToLight, world);
+        if (hitToLight.distance < maxDistance)
+        {
+            Ray reflectionRay = Ray(hit.point, hit.reflection);
+            reflectionRay.setPosition(ray.x, ray.y);
+            return float(0.7) * ColorPixel(reflectionRay, world, reflections + 1);
+        }
+        return glm::dot(rayToLight.dir, hit.reflection) * Color(0.7, 0.7, 0.7);
+    }
+
+    float t = 0.5*(ray.dir.y + 1.0);
+    return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
+}
+
+Hit CalcNearestHit(const Ray &ray, World &world)
 {
     Hit hit;
     Hit nearestHit;
@@ -84,11 +110,5 @@ Color ColorPixel(const Ray &ray, World &world)
             }
         }
     }
-    if (nearestHit.distance < maxDistance)
-    {
-        return float(0.5) * glm::vec3(nearestHit.normal.x + 1, nearestHit.normal.y + 1, nearestHit.normal.z + 1);
-    }
-
-    float t = ray.dir.y + 1.0;
-    return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
+    return nearestHit;
 }

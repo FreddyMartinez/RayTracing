@@ -40,7 +40,7 @@ bool Sphere::IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const {
 
     hit.distance = root;
     hit.point = ray.CalcPointAt(root);
-    hit.normal = glm::normalize(hit.point - center);
+    hit.setNormal(ray, glm::normalize(hit.point - center));
 
     return true;
 }

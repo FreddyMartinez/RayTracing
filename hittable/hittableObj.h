@@ -27,10 +27,11 @@ bool HittableObj::IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const
 
         float distance;
         if (glm::intersectRayTriangle(ray.orig, ray.dir, vertices[i], vertices[i+1], vertices[i+2], baryPosition, distance)) {
-            if (distance > epsilon && distance < hit.distance) { // TODO: verificar que es el más cercano
+            if (distance > epsilon && distance < hit.distance) {
                 hit.distance = distance;
                 hit.point = ray.CalcPointAt(distance);
-                hit.normal = glm::normalize(glm::cross(vertices[i+1] - vertices[i], vertices[i+2] - vertices[i]));
+                glm::vec3 tempNormal = glm::normalize(glm::cross(vertices[i+1] - vertices[i], vertices[i+2] - vertices[i]));
+                hit.setNormal(ray, tempNormal);
                 thereIsHit = true;
             }
         }
