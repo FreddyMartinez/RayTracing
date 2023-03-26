@@ -86,9 +86,11 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
         {
             Ray reflectionRay = Ray(hit.point, hit.reflection);
             reflectionRay.setPosition(ray.x, ray.y);
-            return float(0.7) * ColorPixel(reflectionRay, world, reflections + 1);
+            // cout << hit.material->reflectance << endl; 
+            return hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
         }
-        return glm::dot(rayToLight.dir, hit.reflection) * Color(0.7, 0.7, 0.7);
+        // cout << hit.material->color.x << ", " << hit.material->color.y << ", " << hit.material->color.z << ", " << endl;
+        return glm::dot(rayToLight.dir, hit.reflection) * hit.material->color;
     }
 
     float t = 0.5*(ray.dir.y + 1.0);

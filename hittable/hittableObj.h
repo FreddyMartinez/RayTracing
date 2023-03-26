@@ -6,15 +6,14 @@
 
 class HittableObj : public Hittable {
     public:
-        HittableObj() {}
-        HittableObj(OBJ object) : obj(object) {};
+        HittableObj(OBJ object, Material *mat) : obj(object), material(mat) {};
         
         virtual bool IsHitByRay(
             const Ray& ray, double maxDistance, Hit& hit) const override;
 
     public:
         OBJ obj;
-        Point pos;
+        Material *material;
 };
 
 bool HittableObj::IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const {
@@ -32,6 +31,7 @@ bool HittableObj::IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const
                 hit.point = ray.CalcPointAt(distance);
                 glm::vec3 tempNormal = glm::normalize(glm::cross(vertices[i+1] - vertices[i], vertices[i+2] - vertices[i]));
                 hit.setNormal(ray, tempNormal);
+                hit.material = material;
                 thereIsHit = true;
             }
         }

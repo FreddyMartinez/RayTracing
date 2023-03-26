@@ -7,12 +7,14 @@
 #include "../ray/ray.h"
 
 const float epsilon = 0.01;
+class Material;
 
 struct Hit {
     Point point;
     glm::vec3 normal;
     double distance;
     glm::vec3 reflection;
+    Material *material;
 
     inline void setNormal(const Ray& r, const glm::vec3& tempNormal) {
         bool normalPointsOut = glm::dot(r.dir, tempNormal) < 0;
@@ -26,4 +28,11 @@ struct Hit {
 class Hittable {
     public:
         virtual bool IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const = 0;
+};
+
+class Material {
+    public:
+        Color color;
+        float reflectance;
+        Material(Color col, float ref): color(col), reflectance(ref) {};
 };

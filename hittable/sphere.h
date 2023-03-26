@@ -4,8 +4,7 @@
 
 class Sphere : public Hittable {
     public:
-        Sphere() {}
-        Sphere(Point cen, double r) : center(cen), radius(r) {};
+        Sphere(Point cen, double r, Material *mat) : center(cen), radius(r), material(mat){};
 
         virtual bool IsHitByRay(
             const Ray& ray, double maxDistance, Hit& rec) const override;
@@ -13,6 +12,7 @@ class Sphere : public Hittable {
     public:
         Point center;
         double radius;
+        Material *material;
 };
 
 /**
@@ -41,6 +41,7 @@ bool Sphere::IsHitByRay(const Ray& ray, double maxDistance, Hit& hit) const {
     hit.distance = root;
     hit.point = ray.CalcPointAt(root);
     hit.setNormal(ray, glm::normalize(hit.point - center));
+    hit.material = material;
 
     return true;
 }
