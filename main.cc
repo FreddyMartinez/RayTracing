@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <ctime>
 #include "ray/ray.h"
 #include "camera/camera.h"
 #include "obj/obj.h"
@@ -35,6 +36,8 @@ int main(int argc, char *argv[])
     float ypos = std::stof(argv[2]);
     float zpos = std::stof(argv[3]);
 
+    unsigned t0 = clock();
+
     // definir posición de la cámara
     Camera camera(glm::vec3(xpos, ypos, zpos), width, height);
     // generar rayos
@@ -46,6 +49,9 @@ int main(int argc, char *argv[])
     // pintar escena
     Draw(rayVector, world);
 
+    unsigned t1 = clock();
+    double time = (double(t1 - t0) / CLOCKS_PER_SEC);
+    cout << "Execution Time: " << time << endl;
     return 0;
 }
 
@@ -83,17 +89,17 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
         Ray rayToLight = Ray(hit.point, world.light);
         Hit hitToLight = CalcNearestHit(rayToLight, world);
         if (hitToLight.distance < maxDistance)
-        {
+        { // calcular reflexión difusa
             Ray reflectionRay = Ray(hit.point, hit.reflection);
             reflectionRay.setPosition(ray.x, ray.y);
-            // cout << hit.material->reflectance << endl; 
+            // cout << hit.material->reflectance << endl;
             return hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
         }
-        // cout << hit.material->color.x << ", " << hit.material->color.y << ", " << hit.material->color.z << ", " << endl;
+        // componente de iluminación directa
         return glm::dot(rayToLight.dir, hit.reflection) * hit.material->color;
     }
 
-    float t = 0.5*(ray.dir.y + 1.0);
+    float t = 0.5 * (ray.dir.y + 1.0);
     return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
 }
 
@@ -102,8 +108,9 @@ Hit CalcNearestHit(const Ray &ray, World &world)
     Hit hit;
     Hit nearestHit;
     nearestHit.distance = maxDistance;
-    std::vector<Hittable*>::iterator hitObj;
-    for (const auto& hitObj : world.objects) {
+    std::vector<Hittable *>::iterator hitObj;
+    for (const auto &hitObj : world.objects)
+    {
         if (hitObj->IsHitByRay(ray, maxDistance, hit))
         {
             if (hit.distance < nearestHit.distance)
