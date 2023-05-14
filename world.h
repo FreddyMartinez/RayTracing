@@ -28,13 +28,35 @@ void World::LoadObjects() {
     Sphere* sphere = new Sphere(Point(-0.8, 0.5, 0), 0.5, basicRedMat);
     objects.push_back(sphere);
     // second sphere
-    Material* basicBlueMat = new Material(Color(0.1, 0.2, 0.9), 0.2);
+    Material* basicBlueMat = new Material(Color(0.1, 0.2, 0.9), 0.95);
     Sphere* sphere2 = new Sphere(Point(0, 0.5, 2), 0.5, basicBlueMat);
     objects.push_back(sphere2);
     // add floor
     OBJ plane("./obj/floor.obj");
     plane.scale(20);
-    Material* floorMat = new Material(Color(0.7, 0.7, 0.7), 0.2);
+    Material* floorMat = new Material(Color(0.7, 0.7, 0.7), 0.0);
     HittableObj* hplane = new HittableObj(plane, floorMat);
     objects.push_back(hplane);
+
+    // add right wall
+    OBJ firstWall("./obj/lt_wall.obj");
+    firstWall.translate(glm::vec3(0.4, 0.5, 0.0));
+    firstWall.scale(10);
+    Material *wallMat = new Material(Color(0.2, 0.9, 0.2), 0.1);
+    HittableObj *hittableWall = new HittableObj(firstWall, wallMat);
+    objects.push_back(hittableWall);
+    // add left wall
+    OBJ secondWall("./obj/lt_wall.obj");
+    secondWall.translate(glm::vec3(-0.4, 0.5, 0.0));
+    secondWall.scale(10);
+    Material *secondWallMat = new Material(Color(0.8, 0.1, 0.8), 0.1);
+    HittableObj *secondHittableWall = new HittableObj(secondWall, secondWallMat);
+    objects.push_back(secondHittableWall);
+    // add background wall
+    OBJ backgroundWall("./obj/bg_wall.obj");
+    backgroundWall.translate(glm::vec3(0.0, 0.5, 0.5));
+    backgroundWall.scale(10);
+    Material *bgWallMat = new Material(Color(1.0, 1.0, 1.0), 0.1);
+    HittableObj *bgHittableWall = new HittableObj(backgroundWall, bgWallMat);
+    objects.push_back(bgHittableWall);
 }
