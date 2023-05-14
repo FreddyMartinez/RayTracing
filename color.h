@@ -14,6 +14,8 @@ Hit CalcNearestHit(const Ray &ray, World &world);
 Point randomInUnitSphere();
 glm::vec3 randomUnitVector(const glm::vec3 &normal);
 Color LambertianDiffuseComponent(const Hit &hit, World &world, int reflections);
+Color SpecularComponent(const Hit &hit, World &world, int reflections);
+Color ReflectedColor(const Hit &hit, World &world, int reflections);
 
 Color ColorPixel(const Ray &ray, World &world, int reflections)
 {
@@ -25,7 +27,7 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
   Hit hit = CalcNearestHit(ray, world);
   if (hit.distance < maxDistance)
   {
-    Color reflected = float(0.5) * LambertianDiffuseComponent(hit, world, reflections);
+    Color reflected = float(0.5) * ReflectedColor(hit, world, reflections);
     Ray rayToLight = Ray(hit.point, world.light);
     Hit hitToLight = CalcNearestHit(rayToLight, world);
     if (hitToLight.distance == maxDistance)
@@ -91,6 +93,28 @@ Color LambertianDiffuseComponent(const Hit &hit, World &world, int reflections)
 {
   Point target = hit.point + randomUnitVector(hit.normal);
   Ray reflectionRay = Ray(hit.point, target);
-  Color reflectedColor = hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
+  Color reflectedColor = float(0.3) * ColorPixel(reflectionRay, world, reflections + 1);
   return (reflectedColor + hit.material->color) / float(2.0);
+}
+
+/**
+ * Calculates the specular component
+*/
+Color SpecularComponent(const Hit &hit, World &world, int reflections)
+{
+  Ray reflectionRay = Ray(hit.point, hit.reflection);
+  return hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
+}
+
+Color ReflectedColor(const Hit &hit, World &world, int reflections)
+{
+  float randomNum = rand() / (RAND_MAX + 1.0);
+  if (randomNum > hit.material->reflectance)
+  {
+    return LambertianDiffuseComponent(hit, world, reflections);
+  }
+  else
+  {
+    return SpecularComponent(hit, world, reflections);
+  }
 }
