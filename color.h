@@ -30,8 +30,11 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
     Hit hitToLight = CalcNearestHit(rayToLight, world);
     if (hitToLight.distance == maxDistance)
     { // componente de iluminación directa
-      Color direct = glm::dot(rayToLight.dir, hit.reflection) * hit.material->color;
-      return reflected + direct;
+      float dotProd = glm::dot(rayToLight.dir, hit.reflection);
+      if (dotProd > 0.0)
+      {
+        return reflected + dotProd * hit.material->color;
+      }
     }
     return reflected;
   }

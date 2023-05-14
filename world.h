@@ -34,7 +34,7 @@ void World::LoadObjects() {
     // add floor
     OBJ plane("./obj/floor.obj");
     plane.scale(20);
-    Material* floorMat = new Material(Color(0.7, 0.7, 0.7), 0.8);
+    Material* floorMat = new Material(Color(0.7, 0.7, 0.7), 0.2);
     HittableObj* hplane = new HittableObj(plane, floorMat);
     objects.push_back(hplane);
 }
