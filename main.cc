@@ -4,24 +4,19 @@
 #include <ctime>
 #include "ray/ray.h"
 #include "camera/camera.h"
-#include "obj/obj.h"
 #include "png/png.h"
 #include "hittable/hittable.h"
-#include "hittable/sphere.h"
-#include "hittable/hittableObj.h"
 #include "world.h"
+#include "color.h"
 
 using namespace std;
 
 void Draw(vector<Ray> &rayVector, World &world);
-Color ColorPixel(const Ray &ray, World &world, int reflections);
 Color GetMultiSampledColor(const Ray &ray, World &world);
-Hit CalcNearestHit(const Ray &ray, World &world);
 
 const int width = 500;
 const int height = 500;
 
-const double maxDistance = 100.0;
 const int numOfSamples = 5.0;
 const int maxNumOfRebounds = 3;
 
@@ -74,50 +69,4 @@ Color GetMultiSampledColor(const Ray &ray, World &world)
         color += ColorPixel(randRay, world, 1);
     }
     return float(1.0 / (numOfSamples + 1)) * color;
-}
-
-Color ColorPixel(const Ray &ray, World &world, int reflections)
-{
-    if (reflections >= 20)
-    {
-        return Color(0.0, 0.0, 0.0);
-    }
-
-    Hit hit = CalcNearestHit(ray, world);
-    if (hit.distance < maxDistance)
-    {
-        Ray rayToLight = Ray(hit.point, world.light);
-        Hit hitToLight = CalcNearestHit(rayToLight, world);
-        if (hitToLight.distance < maxDistance)
-        { // calcular reflexión difusa
-            Ray reflectionRay = Ray(hit.point, hit.reflection);
-            reflectionRay.setPosition(ray.x, ray.y);
-            // cout << hit.material->reflectance << endl;
-            return hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
-        }
-        // componente de iluminación directa
-        return glm::dot(rayToLight.dir, hit.reflection) * hit.material->color;
-    }
-
-    float t = 0.5 * (ray.dir.y + 1.0);
-    return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
-}
-
-Hit CalcNearestHit(const Ray &ray, World &world)
-{
-    Hit hit;
-    Hit nearestHit;
-    nearestHit.distance = maxDistance;
-    std::vector<Hittable *>::iterator hitObj;
-    for (const auto &hitObj : world.objects)
-    {
-        if (hitObj->IsHitByRay(ray, maxDistance, hit))
-        {
-            if (hit.distance < nearestHit.distance)
-            {
-                nearestHit = hit;
-            }
-        }
-    }
-    return nearestHit;
 }

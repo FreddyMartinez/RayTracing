@@ -51,7 +51,9 @@ vector<Ray> CreateRayVector(Camera& camera, int numOfSamples)
     return rayVector;
 }
 
-
+/**
+ * Returns a number between [-max/2, max/2]
+*/
 double RandomDouble(double max) {
     return max * rand() / (RAND_MAX + 1.0) - max / 2;
 }
