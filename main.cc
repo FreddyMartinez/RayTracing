@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
 void Draw(vector<Ray> &rayVector, World &world)
 {
     PNG png(width, height);
+    #pragma omp parallel for
     for (int i = 0; i < rayVector.size(); i++)
     {
         Color color = GetMultiSampledColor(rayVector[i], world);

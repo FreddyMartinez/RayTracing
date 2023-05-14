@@ -6,7 +6,7 @@ camera/camera.cc \
 obj/obj.cc \
 png/png.cc \
 
-CXX:=g++ -O3 -march=native
+CXX:=g++ -O3 -march=native -fopenmp
 
 # Win
 LIBS:=-lpng -lglfw3 -lglew32 -lglu32 -lopengl32 -lgdi32 -lz
