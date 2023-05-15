@@ -6,17 +6,35 @@
 #include "hittable/sphere.h"
 #include "hittable/hittableObj.h"
 
+class Light {
+    public:
+
+        Point point;
+        float energy;
+
+        Light(Point p, float e): point(p), energy(e) {};
+};
+
 class World {
     public: 
         vector<Hittable*> objects;
-        Point light;
-        float lightEnergy;
+        vector<Light*> lights;
 
         void LoadObjects();
-        World(Point globalLight, float lEnergy): light(globalLight), lightEnergy(lEnergy) {
+        void CreateLights();
+        World() {
             LoadObjects();
+            CreateLights();
         };
 };
+
+void World::CreateLights() {
+    Light* mainLight = new Light(Point(-2.0, 10.0, 0.0), 80.0);
+    lights.push_back(mainLight);
+
+    Light* secondLight = new Light(Point(2.0, 10.0, 5.0), 60.0);
+    lights.push_back(secondLight);
+}
 
 void World::LoadObjects() {
     Material* basicRedMat = new Material(Color(0.9, 0.2, 0.2), 0.2);

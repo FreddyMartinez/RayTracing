@@ -29,16 +29,19 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
   if (hit.distance < maxDistance)
   {
     Color reflected = LambertianDiffuseComponent(hit, world, reflections);
-    Ray rayToLight = Ray(hit.point, world.light);
-    Hit hitToLight = CalcNearestHit(rayToLight, world);
-    if (hitToLight.distance == maxDistance)
-    { // Direct Ilumination component: multiply by light energy and attenuate by distance^2 
-      float dotProd = glm::dot(rayToLight.dir, hit.normal);
-      if (dotProd > 0.0)
-      {
-        float dist = glm::length(world.light - hit.point);
-        //  L = Pd * J * dot(N, Li) / (Pi * r^2)
-        return reflected + dotProd * world.lightEnergy * hit.material->color / (dist * dist);
+    vector<Light *>::iterator light;
+    for (const auto &light : world.lights) {
+      Ray rayToLight = Ray(hit.point, light->point);
+      Hit hitToLight = CalcNearestHit(rayToLight, world);
+      if (hitToLight.distance == maxDistance)
+      { // Direct Ilumination component: multiply by light energy and attenuate by distance^2 
+        float dotProd = glm::dot(rayToLight.dir, hit.normal);
+        if (dotProd > 0.0)
+        {
+          float dist = glm::length(light->point - hit.point);
+          //  L = Pd * J * dot(N, Li) / (Pi * r^2)
+          reflected += hit.material->color * light->energy * dotProd / (dist * dist);
+        }
       }
     }
     return reflected;

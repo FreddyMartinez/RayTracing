@@ -17,7 +17,7 @@ Color GetMultiSampledColor(const Ray &ray, World &world);
 const int width = 500;
 const int height = 500;
 
-const int numOfSamples = 5.0;
+const int numOfSamples = 100;
 const int maxNumOfRebounds = 3;
 
 int main(int argc, char *argv[])
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     vector<Ray> rayVector = CreateRayVector(camera, numOfSamples);
 
     // cargar el(los) objeto(s)
-    World world = World(Point(0.0, 50.0, 0.0));
+    World world = World();
 
     // pintar escena
     Draw(rayVector, world);
