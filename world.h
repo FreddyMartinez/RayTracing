@@ -10,9 +10,10 @@ class World {
     public: 
         vector<Hittable*> objects;
         Point light;
+        float lightEnergy;
 
         void LoadObjects();
-        World(Point globalLight): light(globalLight) {
+        World(Point globalLight, float lEnergy): light(globalLight), lightEnergy(lEnergy) {
             LoadObjects();
         };
 };
@@ -59,4 +60,10 @@ void World::LoadObjects() {
     Material *bgWallMat = new Material(Color(1.0, 1.0, 1.0), 0.1);
     HittableObj *bgHittableWall = new HittableObj(backgroundWall, bgWallMat);
     objects.push_back(bgHittableWall);
+    
+    OBJ frontalWall("./obj/bg_wall.obj");
+    frontalWall.translate(glm::vec3(0.0, 0.5, -0.5));
+    frontalWall.scale(10);
+    HittableObj *fHittableWall = new HittableObj(frontalWall, bgWallMat);
+    objects.push_back(fHittableWall);
 }

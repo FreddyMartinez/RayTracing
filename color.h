@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <glm/glm.hpp>
+#include <math.h>
 #include "ray/ray.h"
 #include "hittable/hittable.h"
 #include "world.h"
@@ -19,7 +20,7 @@ Color ReflectedColor(const Hit &hit, World &world, int reflections);
 
 Color ColorPixel(const Ray &ray, World &world, int reflections)
 {
-  if (reflections >= 20)
+  if (reflections >= 5)
   {
     return Color(0.0, 0.0, 0.0);
   }
@@ -27,15 +28,17 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
   Hit hit = CalcNearestHit(ray, world);
   if (hit.distance < maxDistance)
   {
-    Color reflected = float(0.5) * ReflectedColor(hit, world, reflections);
+    Color reflected = ReflectedColor(hit, world, reflections);
     Ray rayToLight = Ray(hit.point, world.light);
     Hit hitToLight = CalcNearestHit(rayToLight, world);
     if (hitToLight.distance == maxDistance)
-    { // componente de iluminación directa
-      float dotProd = glm::dot(rayToLight.dir, hit.reflection);
+    { // Direct Ilumination component: multiply by light energy and attenuate by distance^2 
+      float dotProd = glm::dot(rayToLight.dir, hit.normal);
       if (dotProd > 0.0)
       {
-        return reflected + dotProd * hit.material->color;
+        float dist = glm::length(world.light - hit.point);
+        //  L = Pd * J * dot(N, Li) / (Pi * r^2)
+        return reflected + dotProd * world.lightEnergy * hit.material->color / (dist * dist);
       }
     }
     return reflected;
