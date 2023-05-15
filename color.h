@@ -28,7 +28,7 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
   Hit hit = CalcNearestHit(ray, world);
   if (hit.distance < maxDistance)
   {
-    Color reflected = ReflectedColor(hit, world, reflections);
+    Color reflected = LambertianDiffuseComponent(hit, world, reflections);
     Ray rayToLight = Ray(hit.point, world.light);
     Hit hitToLight = CalcNearestHit(rayToLight, world);
     if (hitToLight.distance == maxDistance)
@@ -44,8 +44,7 @@ Color ColorPixel(const Ray &ray, World &world, int reflections)
     return reflected;
   }
 
-  float t = 0.5 * (ray.dir.y + 1.0);
-  return float(1.0 - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.5, 0.7, 1.0);
+  return Color(0.0, 0.0, 0.0);
 }
 
 Hit CalcNearestHit(const Ray &ray, World &world)
@@ -73,6 +72,10 @@ Hit CalcNearestHit(const Ray &ray, World &world)
 Point randomInUnitSphere()
 {
   Point randomPoint = glm::vec3(RandomDouble(2.0), RandomDouble(2.0), RandomDouble(2.0));
+  if (glm::length(randomPoint) > 1.0)
+  {
+    return randomInUnitSphere();
+  }
   return glm::normalize(randomPoint);
 }
 
@@ -96,8 +99,9 @@ Color LambertianDiffuseComponent(const Hit &hit, World &world, int reflections)
 {
   Point target = hit.point + randomUnitVector(hit.normal);
   Ray reflectionRay = Ray(hit.point, target);
-  Color reflectedColor = float(0.3) * ColorPixel(reflectionRay, world, reflections + 1);
-  return (reflectedColor + hit.material->color) / float(2.0);
+  Color reflectedLight = ColorPixel(reflectionRay, world, reflections + 1); // / float(2 * M_PI)
+  float angleAttenuation = glm::dot(reflectionRay.dir, hit.normal);
+  return angleAttenuation * reflectedLight * hit.material->color;   // * float(2 * M_PI)
 }
 
 /**
