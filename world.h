@@ -29,10 +29,10 @@ class World {
 };
 
 void World::CreateLights() {
-    Light* mainLight = new Light(Point(-2.0, 10.0, 0.0), 80.0);
+    Light* mainLight = new Light(Point(-3.0, 10.0, 1.0), 60.0);
     lights.push_back(mainLight);
 
-    Light* secondLight = new Light(Point(2.0, 10.0, 5.0), 60.0);
+    Light* secondLight = new Light(Point(3.0, 10.0, 1.0), 40.0);
     lights.push_back(secondLight);
 }
 
@@ -47,7 +47,7 @@ void World::LoadObjects() {
     Sphere* sphere = new Sphere(Point(-0.8, 0.5, 0), 0.5, basicRedMat);
     objects.push_back(sphere);
     // second sphere
-    Material* basicBlueMat = new Material(Color(0.1, 0.2, 0.9), 0.95);
+    Material* basicBlueMat = new Material(Color(0.1, 0.2, 0.9), 0.75);
     Sphere* sphere2 = new Sphere(Point(0, 0.5, 2), 0.5, basicBlueMat);
     objects.push_back(sphere2);
     // add floor
@@ -68,7 +68,7 @@ void World::LoadObjects() {
     OBJ secondWall("./obj/lt_wall.obj");
     secondWall.translate(glm::vec3(-0.4, 0.5, 0.0));
     secondWall.scale(10);
-    Material *secondWallMat = new Material(Color(0.8, 0.1, 0.8), 0.1);
+    Material *secondWallMat = new Material(Color(0.9, 0.1, 0.1), 0.1);
     HittableObj *secondHittableWall = new HittableObj(secondWall, secondWallMat);
     objects.push_back(secondHittableWall);
     // add background wall

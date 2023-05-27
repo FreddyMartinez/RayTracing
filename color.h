@@ -113,7 +113,8 @@ Color LambertianDiffuseComponent(const Hit &hit, World &world, int reflections)
 Color SpecularComponent(const Hit &hit, World &world, int reflections)
 {
   Ray reflectionRay = Ray(hit.point, hit.reflection);
-  return hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
+  Color materialColor = (1 - hit.material->reflectance) * hit.material->color;
+  return materialColor + hit.material->reflectance * ColorPixel(reflectionRay, world, reflections + 1);
 }
 
 Color ReflectedColor(const Hit &hit, World &world, int reflections)
